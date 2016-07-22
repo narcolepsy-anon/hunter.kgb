@@ -145,3 +145,8 @@ vim
 
 bash-docs
 	sudo apt-get install bash-docs
+
+keyboard shortcuts tool
+	sudo apt-get install gconf-editor
+	##must run from command line or create shortcut, does not show up in applications menu as far as i can tell
+	gconf-editor &
