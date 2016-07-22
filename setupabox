@@ -1,0 +1,147 @@
+install debian
+	encrypted lvm
+	
+add extra swap
+	dd if=/dev/zero of=/root/myswapfile bs=1M count=32758 #32 GB
+	chmod 600 /root/myswapfile
+	mkswap /root/myswapfile
+	swapon /root/myswapfile
+	vi /etc/fstab
+	/root/myswapfile	swap	swap	defaults	 0 0
+verify
+	swapon -s
+	free -k
+check for persistence after restart
+
+install sudo (as root)
+	apt-get install sudo
+	adduser yourusernamehere sudo
+	nano /etc/sudoers
+	find line that says "%sudo  ALL=(ALL:ALL) ALL", edd the next line below.
+	yourusernamehere  ALL=(ALL:ALL) ALL
+	#CTRL+X; y; [ENTER]
+	exit from root, test sudo command to verify
+	
+install wifi driver
+	find the .tgz for Intel Centrino Ultimate-N 6300
+	unzip
+	cat readme
+	find the install instructions
+	it's a one liner; sudo
+	
+install tripwire ###https://www.digitalocean.com/community/tutorials/how-to-use-tripwire-to-detect-server-intrusions-on-an-ubuntu-vps
+	FOLLOW THE LINK IF IT'S STILL AVAILABLE
+	sudo apt-get update
+	sudo apt-get install tripwire
+	#configure
+	sudo twadmin --create-polfile /etc/tripwire/twpol.txt
+	sudo tripwire --init
+	sudo sh -c 'tripwire --check | grep Filename > test_results'
+	less /etc/tripwire/test_results
+	
+	sudo nano /etc/tripwire/twpol.txt
+	
+	********************
+Configure the Policy File to Match Your System
+Now that we have a list of files that are setting off tripwire, we can go through our policy file and edit it to 
+get rid of these false positives.
+Open the plain text policy in your editor with root privileges:
+sudo nano /etc/tripwire/twpol.txt
+Do a search for each of the files that were returned in the test_results file. Comment out all of the lines that 
+you find that match.
+In the "Boot Scripts" section, you should comment out the /etc/rc.boot line, since this isn't present in an Ubuntu system:
+(
+  rulename = "Boot Scripts",
+  severity = $(SIG_HI)
+)
+{
+        /etc/init.d             -> $(SEC_BIN) ;
+        #/etc/rc.boot            -> $(SEC_BIN) ;
+        /etc/rcS.d              -> $(SEC_BIN) ;
+There were a lot of files in the /root home directory that needed to be commented out on my system. Anything that 
+is not present on your system should be commented out.
+	********************
+	
+	sudo twadmin -m P /etc/tripwire/twpol.txt
+	sudo tripwire --init
+	#once it all works
+	sudo tripwire --check
+	sudo rm /etc/tripwire/test_results
+	sudo sh -c 'twadmin --print-polfile > /etc/tripwire/twpol.txt'
+	sudo tripwire --check --interactive
+	
+install opera (su root)
+	sudo vi /etc/apt/sources.list
+	deb http://deb.opera.com/opera stable non-free #add this line
+	aptitude update
+	wget -O - http://deb.opera.com/archive.key | apt-key add -
+	aptitude update
+	aptitude install opera
+	#first time got me an out of date version
+	sudo aptitude install libqt3-mt #maybe don't have to do this
+	sudo apt-get install opera-stable
+	#be sure to remove the launcher for iceweasel
+	
+	#add developer version
+	sudo apt-get install opera-developer
+	
+install vivaldi
+	#i didn't do it this round
+	
+install vm workstation player
+	#download it first
+	chmod a+x VMware-Player-SOMETHING.bundle
+	sudo ./VMware-Player-SOMETHING.bundle
+	#maybe i can do this first:
+	sudo apt-get install build-essential
+	sudo apt-get install linux-headers-$(uname -r)
+	
+install 7zip
+	sudo apt-get install p7zip-full
+
+install virtualbox
+	vi /etc/apt/sources.list
+	deb http://download.virtualbox.org/virtualbox/debian jessie contrib #add this line
+	wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+	wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+	sudo apt-get update
+	sudo apt-get install virtualbox-5.0
+	sudo apt-get install dkms
+	
+download/set up VMs
+	follow the rules bro
+	
+install wine
+	sudo dpkg --add-architecture i386
+	wget https://dl.winehq.org/wine-builds/Release.key	#download if it doesn't resolve host name
+	sudo apt-key add Release.key
+	sudo vi /etc/apt/sources.list
+	deb https://dl.winehq.org/wine-builds/debian/ DISTRO main
+	sudo apt-get update
+	sudo apt-get install winehq-devel
+
+firewall
+	sudo apt-get install ufw
+	sudo ufw default deny
+	sudo ufw enable
+	sudo ufw status verbose
+	
+bluetooth module
+	sudo vi /etc/rc.local
+	
+	add:
+	service bluetooth stop
+	#this should keep bluetooth from starting
+	
+sublime_text
+	#download
+	sudo tar xvjf sublime_text_3_build_3103_x64.tar.bz2
+	
+gparted
+	sudo apt-get install gparted
+	
+vim
+	sudo apt-get install vim
+
+bash-docs
+	sudo apt-get install bash-docs
