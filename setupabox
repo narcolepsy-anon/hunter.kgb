@@ -142,6 +142,8 @@ gparted
 	
 vim
 	sudo apt-get install vim
+	#in .bash_aliases
+	alias vi=vim
 
 bash-docs
 	sudo apt-get install bash-docs
@@ -151,3 +153,7 @@ keyboard shortcuts tool
 	##must run from command line or create shortcut, does not show up in applications menu as far as i can tell
 	gconf-editor &
 	##i wasn't able to get this to work, but it may prove useful in the future
+
+fluxbox
+	sudo apt-get install fluxbox
+	#start a fluxbox session by logging in?
